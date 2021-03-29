@@ -17,20 +17,25 @@ def search(address):
     return json_response["response"]["GeoObjectCollection"]["featureMember"][0]["GeoObject"]
 
 
-toponym = search(" ".join(sys.argv[1:]))
-toponym_coodrinates = toponym["Point"]["pos"]
-toponym_longitude, toponym_lattitude = toponym_coodrinates.split()
-env = toponym['boundedBy']['Envelope']
-lc = toponym['boundedBy']['Envelope']['lowerCorner'].split()
-uc = toponym['boundedBy']['Envelope']['upperCorner'].split()
-spn = find_spn(toponym)
-pt = toponym_longitude + ',' + toponym_lattitude + ',pmrdm'
-map_params = {
-    "ll": ",".join([toponym_longitude, toponym_lattitude]),
-    "spn": ",".join(spn),
-    "l": "map",
-    'pt': pt
-}
-map_api_server = "http://static-maps.yandex.ru/1.x/"
-response = requests.get(map_api_server, params=map_params)
-Image.open(BytesIO(response.content)).show()
+def main():
+    toponym = search(" ".join(sys.argv[1:]))
+    toponym_coodrinates = toponym["Point"]["pos"]
+    toponym_longitude, toponym_lattitude = toponym_coodrinates.split()
+    env = toponym['boundedBy']['Envelope']
+    lc = toponym['boundedBy']['Envelope']['lowerCorner'].split()
+    uc = toponym['boundedBy']['Envelope']['upperCorner'].split()
+    spn = find_spn(toponym)
+    pt = toponym_longitude + ',' + toponym_lattitude + ',pmrdm'
+    map_params = {
+        "ll": ",".join([toponym_longitude, toponym_lattitude]),
+        "spn": ",".join(spn),
+        "l": "map",
+        'pt': pt
+    }
+    map_api_server = "http://static-maps.yandex.ru/1.x/"
+    response = requests.get(map_api_server, params=map_params)
+    Image.open(BytesIO(response.content)).show()
+
+
+if __name__ == '__main__':
+    main()
